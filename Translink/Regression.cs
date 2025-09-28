@@ -8,6 +8,7 @@ namespace Translink
     public class Regression : PageTest
     {
         public static ExtentReports Report { get; set; }
+        private static ExtentSparkReporter HtmlReporter { get; set; }
         public static ExtentTest Test { get; set; }
         public static ExtentTest Node { get; set; }
 
@@ -16,13 +17,13 @@ namespace Translink
         [AssemblyInitialize]
         public static void AssemblyInit(TestContext context)
         {
-            // This method is called once for the test assembly, before any tests are run.
+            
         }
 
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
-            // This method is called once for the test assembly, after all tests are run.
+            
         }
 
         [ClassInitialize]
@@ -34,7 +35,7 @@ namespace Translink
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            // This method is called once for the test class, after all tests of the class are run.
+            
         }
 
         [TestInitialize]
@@ -57,7 +58,6 @@ namespace Translink
         [DataRow("chromium")]
         public async Task SearchForSchedule(string browserName)
         {
-            //Page.GotoAsync(TestContext.Properties["SiteURL"].ToString());
             await Tests.Schedule.SearchForSchedule.RunTest(browserName, TestContext, Schedule);
         }
     }

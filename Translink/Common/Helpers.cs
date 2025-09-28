@@ -113,16 +113,21 @@ namespace Translink.Common
             return date.ToString(format, CultureInfo.InvariantCulture);
         }
 
-        public static async Task SetValueAsync(this ILocator locator, IPage page, string value)
+        public static async Task SetValueAsync(this ILocator locator, IPage page, string value, int delayInMilliseconds = 1000)
         {
             var elementHandle = await locator.ElementHandleAsync();
             await page.EvaluateAsync($"el => el.setAttribute('value', '{value}')", elementHandle);
+
+            if (delayInMilliseconds > 0)
+            {
+                await Task.Delay(delayInMilliseconds);
+            }
         }
 
         public static async Task SendKeysToElementAsync(this ILocator locator, string value, int delayInMilliseconds = 1000)
         {
             locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
-            locator.ScrollIntoViewIfNeededAsync();
+            await locator.ScrollIntoViewIfNeededAsync();
             await locator.FillAsync(value);
 
             if (delayInMilliseconds > 0)
@@ -134,13 +139,41 @@ namespace Translink.Common
         public static async Task ClickElementAsync(this ILocator locator, int delayInMilliseconds = 1000)
         {
             locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
-            locator.ScrollIntoViewIfNeededAsync();
+            await locator.ScrollIntoViewIfNeededAsync();
             await locator.ClickAsync(new() { Force = true });
 
             if (delayInMilliseconds > 0)
             {
                 await Task.Delay(delayInMilliseconds);
             }
+        }
+
+        public static async Task<string> GetElementAttributeAsync(this ILocator locator, string attributeName, int delayInMilliseconds = 1000)
+        {
+            locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await locator.ScrollIntoViewIfNeededAsync();
+            var value = await locator.GetAttributeAsync($"{attributeName}");
+
+            if (delayInMilliseconds > 0)
+            {
+                await Task.Delay(delayInMilliseconds);
+            }
+
+            return value;
+        }
+
+        public static async Task<string> GetElementTextAsync(this ILocator locator, int delayInMilliseconds = 1000)
+        {
+            locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await locator.ScrollIntoViewIfNeededAsync();
+            var value = await locator.InnerTextAsync();
+
+            if (delayInMilliseconds > 0)
+            {
+                await Task.Delay(delayInMilliseconds);
+            }
+
+            return value;
         }
     }
 }

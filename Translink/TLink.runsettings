@@ -3,6 +3,7 @@
 
   <TestRunParameters>
       <Parameter name="SiteURL" value="https://www.translink.ca"/>
+	  <Parameter name="Headless" value="false"/>
   </TestRunParameters>
 
   <!--<DataCollectionRunSettings>
@@ -11,12 +12,6 @@
         </DataCollector>
       </DataCollectors>
   </DataCollectionRunSettings>-->
-
-  <!--<RunConfiguration>
-	  <DisableAppDomain>true</DisableAppDomain>
-    <TargetPlatform>x64</TargetPlatform>
-    <ResultsDirectory>%temp%\TestResults</ResultsDirectory>
-  </RunConfiguration>-->
 
   <MSTest>
       <DeploymentEnabled>true</DeploymentEnabled>

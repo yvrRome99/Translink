@@ -17,7 +17,7 @@ namespace Translink.Tests.Schedule
         {
             // Setup
             var playwright = await Playwright.CreateAsync();
-            var browser = await Helpers.GetBrowserAsync(playwright, browserName);
+            var browser = await Helpers.GetBrowserAsync(playwright, browserName, Convert.ToBoolean(testContext.Properties["Headless"].ToString()));
             var browsercontext = await browser.NewContextAsync();
             var page = await browsercontext.NewPageAsync();
 
@@ -43,8 +43,9 @@ namespace Translink.Tests.Schedule
                 await Pages.BusSchedule().SelectResult(userData.Result);
 
                 Regression.Node = Regression.Test.CreateNode($"Search for route");
-                await Pages.Route().SearchForRoute(Helpers.GetDate(Convert.ToInt32(userData.Date), 0, 0, 0, "yyyy-MM-dd"), userData.StartTime, userData.EndTime);
-                await Pages.Route().SelectResult(userData.Station);
+                await Pages.Route().SearchForRouteAsync(Helpers.GetDate(Convert.ToInt32(userData.Date), 0, 0, 0, "yyyy-MM-dd"), userData.StartTime, userData.EndTime);
+                await Pages.Route().ValidateTimes(userData.Station);
+                await Pages.Route().SelectResultAsync(userData.Station);
 
                 Regression.Node = Regression.Test.CreateNode($"Save route as favourite");
                 await Pages.Stop().AddToFavourites(userData.NewName);
@@ -54,7 +55,10 @@ namespace Translink.Tests.Schedule
             }
             catch (Exception ex)
             {
-                Regression.Test.Fail($"SearchForSchedule failed! {ex}", MediaEntityBuilder.CreateScreenCaptureFromPath("Error").Build());
+                var path = await Helpers.AddScreenshotAsync("WelcomeToTransLinkPage", testContext, page);
+                Regression.Test.Fail($"SearchForSchedule failed! {ex}", MediaEntityBuilder.CreateScreenCaptureFromPath(path).Build());
+
+                throw;
             }
 
         }
